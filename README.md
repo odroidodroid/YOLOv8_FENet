@@ -21,7 +21,7 @@ iou thr: 0.50, tp: 77378, fp: 12938, fn: 27508,precision: 0.8567474201691837, re
 
 **YOLOv8 + FENetV1 Head**
 
-
+<img width="824" alt="토르드라이브_모델_아키텍처" src="https://github.com/user-attachments/assets/a35cfa17-484b-49ca-8299-63beb08a88dd">
 
 
 -   YOLOv8 - X model is used
