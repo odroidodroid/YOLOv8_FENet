@@ -45,15 +45,16 @@ iou thr: 0.50, tp: 77378, fp: 12938, fn: 27508,precision: 0.8567474201691837, re
     - avg : 76.4758ms per 1 batch (including time allocating and free GPU memory)
     - TensorRT model execution time is only avg 9.515ms (**41% speedup**)
 
-![nsys_tensorrt_detail.PNG](https://prod-files-secure.s3.us-west-2.amazonaws.com/ec6ce208-fc3c-49cd-bdf6-0b69f0fec57b/329d6b85-937d-46c4-b7c1-05fde0ee5ed9/nsys_tensorrt_detail.png)
+<img width="648" alt="nsys_tensorrt_detail" src="https://github.com/user-attachments/assets/9997d33c-fc07-4d83-accf-0b021076d705">
+
 
 - orange block is TensorRT execution time of backbone, neck, head model blocks
 
 ## 2. Methods
 
 **YOLOv8 + FENetV1 Head**
+<img width="824" alt="토르드라이브_모델_아키텍처" src="https://github.com/user-attachments/assets/5fd7d757-bbcc-4d31-9448-1a8534736088">
 
-![토르드라이브_모델_아키텍처.PNG](https://prod-files-secure.s3.us-west-2.amazonaws.com/ec6ce208-fc3c-49cd-bdf6-0b69f0fec57b/4333574d-0301-4fc4-a2ff-5147d24e95f0/%ED%86%A0%EB%A5%B4%EB%93%9C%EB%9D%BC%EC%9D%B4%EB%B8%8C_%EB%AA%A8%EB%8D%B8_%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98.png)
 
 - YOLOv8 - X model is used
 - Conv2d module are added to neck outputs to match dimensions with FEHeadV1
