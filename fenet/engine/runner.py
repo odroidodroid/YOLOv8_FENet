@@ -2,21 +2,22 @@ import time
 import cv2
 import torch
 from tqdm import tqdm
-import pytorch_warmup as warmup
+# import pytorch_warmup as warmup
 import numpy as np
 import random
 import os
 
 from fenet.models.registry import build_net
-from .registry import build_trainer, build_evaluator
+# from .registry import build_trainer, build_evaluator
 from .optimizer import build_optimizer
 from .scheduler import build_scheduler
+from torch.utils.data import dataloader
 from fenet.datasets import build_dataloader
 from fenet.utils.recorder import build_recorder
 from fenet.utils.net_utils import save_model, load_network, resume_network
-from mmcv.parallel import MMDataParallel
+from mmengine.registry import init_default_scope
 
-
+init_default_scope('fenet')
 
 # build runner
 # default for recoder  net  optimizer  scheduler
@@ -28,8 +29,7 @@ class Runner(object):
         self.cfg = cfg
         self.recorder = build_recorder(self.cfg)
         self.net = build_net(self.cfg)
-        self.net = MMDataParallel(self.net,
-                                  device_ids=range(self.cfg.gpus)).cuda()
+        self.net = self.net.cuda()
         self.recorder.logger.info('Network: \n' + str(self.net))
         self.resume()
         self.optimizer = build_optimizer(self.cfg, self.net)
@@ -102,6 +102,7 @@ class Runner(object):
         train_loader = build_dataloader(self.cfg.dataset.train,
                                         self.cfg,
                                         is_train=True)
+        # train_loader = mmRunner.build_dataloader(self.cfg.train_dataloader)
 
         self.recorder.logger.info('Start training...')
         start_epoch = 0
@@ -138,13 +139,14 @@ class Runner(object):
             self.test_loader = build_dataloader(self.cfg.dataset.test,
                                                 self.cfg,
                                                 is_train=False)
+            # self.test_loader = mmRunner.build_dataloader(self.cfg.test_dataloader)
         self.net.eval()
         predictions = []
         for i, data in enumerate(tqdm(self.test_loader, desc=f'Testing')):
             data = self.to_cuda(data)
             with torch.no_grad():
                 output = self.net(data)
-                output = self.net.module.heads.get_lanes(output)
+                output = self.net.heads.get_lanes(output)
                 predictions.extend(output)
             if self.cfg.view:
                 self.test_loader.dataset.view(output, data['meta'])
@@ -159,13 +161,14 @@ class Runner(object):
             self.val_loader = build_dataloader(self.cfg.dataset.val,
                                                self.cfg,
                                                is_train=False)
+            # self.val_loader = mmRunner.build_dataloader(self.cfg.val_dataloader)
         self.net.eval()
         predictions = []
         for i, data in enumerate(tqdm(self.val_loader, desc=f'Validate')):
             data = self.to_cuda(data)
             with torch.no_grad():
                 output = self.net(data)
-                output = self.net.module.heads.get_lanes(output)
+                output = self.net.heads.get_lanes(output)
                 predictions.extend(output)
             if self.cfg.view:
                 self.val_loader.dataset.view(output, data['meta'])

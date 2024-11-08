@@ -23,13 +23,13 @@ import pdb
 @HEADS.register_module
 class FEHeadV1(nn.Module):
     def __init__(self,
-                 num_points=72,  
-                 prior_feat_channels=64,  
-                 fc_hidden_dim=64,  
-                 num_priors=192,  
-                 num_fc=2,  
-                 refine_layers=3,  
-                 sample_points=36,  
+                 num_points=72,
+                 prior_feat_channels=64,
+                 fc_hidden_dim=64,
+                 num_priors=192,
+                 num_fc=2,
+                 refine_layers=3,
+                 sample_points=36,
                  cfg=None):
         super(FEHeadV1, self).__init__()
         self.cfg = cfg
@@ -46,10 +46,10 @@ class FEHeadV1(nn.Module):
 
         fe_points = torch.logspace(start=0, end=1, steps=60,base = 72).long()
         fe_points = torch.unique(fe_points)
-        fe_points = 72 - fe_points 
+        fe_points = 72 - fe_points
 
         self.register_buffer(name='sample_x_indexs', tensor=fe_points)
-        
+
         self.register_buffer(name='prior_feat_ys', tensor=torch.flip((1 - self.sample_x_indexs.float() / self.n_strips), dims=[-1]))
         self.register_buffer(name='prior_ys', tensor=torch.linspace(1,
                                                                     0,
@@ -330,7 +330,7 @@ class FEHeadV1(nn.Module):
             # if the prediction does not start at the bottom of the image,
             # extend its prediction until the x is outside the image
             mask = ~((((lane_xs[:start] >= 0.) & (lane_xs[:start] <= 1.)
-                       ).cpu().numpy()[::-1].cumprod()[::-1]).astype(np.bool))
+                       ).cpu().numpy()[::-1].cumprod()[::-1]).astype(np.bool_))
             lane_xs[end + 1:] = -2
             lane_xs[:start][mask] = -2
             lane_ys = self.prior_ys[lane_xs >= 0]

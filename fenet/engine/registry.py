@@ -1,5 +1,5 @@
 from fenet.utils import Registry, build_from_cfg
-
+import torch.nn as nn
 TRAINER = Registry('trainer')
 EVALUATOR = Registry('evaluator')
 

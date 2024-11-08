@@ -27,7 +27,6 @@ CATEGORYS = {
     'night': 'list/test_split/test8_night.txt',
 }
 
-
 @DATASETS.register_module
 class CULane(BaseDataset):
     def __init__(self, data_root, split, processes=None, cfg=None):

@@ -6,9 +6,7 @@ from imgaug.augmentables.lines import LineString, LineStringsOnImage
 from imgaug.augmentables.segmaps import SegmentationMapsOnImage
 from scipy.interpolate import InterpolatedUnivariateSpline
 from fenet.datasets.process.transforms import CETransforms
-
 from ..registry import PROCESS
-
 
 @PROCESS.register_module
 class GenerateLaneLine(object):

@@ -5,7 +5,7 @@ from functools import partial
 import cv2
 import numpy as np
 from tqdm import tqdm
-from p_tqdm import t_map, p_map
+# from p_tqdm import t_map, p_map
 from scipy.interpolate import splprep, splev
 from scipy.optimize import linear_sum_assignment
 from shapely.geometry import LineString, Polygon

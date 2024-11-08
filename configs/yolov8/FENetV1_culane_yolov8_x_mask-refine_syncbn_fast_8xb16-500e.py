@@ -1,10 +1,46 @@
-net = dict(type='Detector', )
+# This config use refining bbox and `YOLOv5CopyPaste`.
+# Refining bbox means refining bbox by mask while loading annotations and
+# transforming after `YOLOv5RandomAffine`
 
-backbone = dict(
-    type='DLAWrapper',
-    dla='dla34',
-    pretrained=True,
-)
+deepen_factor = 1.00
+widen_factor = 1.25
+
+# ========================modified parameters======================
+last_stage_out_channels = 512
+
+mixup_prob = 0.15
+copypaste_prob = 0.3
+
+use_mask2refine = True
+min_area_ratio = 0.01  # YOLOv5RandomAffine
+
+norm_cfg = dict(type='BN', momentum=0.03, eps=0.001)  # Normalization config
+strides = [8, 16, 32]
+
+# =======================Unmodified in most cases==================
+
+net = dict(
+    type='Detector',)
+
+backbone=dict(
+    type='CUYOLOv8CSPDarknet',
+    arch='P5',
+    last_stage_out_channels=last_stage_out_channels,
+    deepen_factor=deepen_factor,
+    widen_factor=widen_factor,
+    norm_cfg=norm_cfg,
+    act_cfg=dict(type='SiLU', inplace=True))
+
+neck = dict(
+    type='CUYOLOv8PAFPN',
+    final_channels=[64, 64, 64],
+    deepen_factor=deepen_factor,
+    widen_factor=widen_factor,
+    in_channels=[256, 512, last_stage_out_channels],
+    out_channels=[256, 512, last_stage_out_channels],
+    num_csp_blocks=3,
+    norm_cfg=norm_cfg,
+    act_cfg=dict(type='SiLU', inplace=True))
 
 num_points = 72
 max_lanes = 4
@@ -23,21 +59,15 @@ seg_loss_weight = 1.0
 Dliou_loss_weight = 1
 Driou_loss_weight = 1
 
-work_dirs = "work_dirs/fenetv1/dla34_culane"
-
-neck = dict(type='PEFPN',
-            in_channels=[128, 256, 512],
-            out_channels=64,
-            num_outs=3,
-            attention=False)
+work_dirs = "work_dirs/yolov8_culane/fenetv1"
 
 test_parameters = dict(conf_threshold=0.4, nms_thres=50, nms_topk=max_lanes)
 
-epochs = 15
-batch_size = 8
+epochs = 30
+batch_size = 24
 
 # or 0.6e-4
-optimizer = dict(type='AdamW', lr=3e-4)  # 3e-4 for batchsize 8 \ 0.6e-3 for 24
+optimizer = dict(type='AdamW', lr=0.6e-3)  # 3e-4 for batchsize 8 \ 0.6e-3 for 24
 total_iter = (88880 // batch_size) * epochs
 scheduler = dict(type='CosineAnnealingLR', T_max=total_iter)
 

@@ -1,3 +1,4 @@
+default_scope = 'fenet'
 net = dict(type='Detector', )
 
 backbone = dict(
@@ -34,10 +35,10 @@ neck = dict(type='PEFPN',
 test_parameters = dict(conf_threshold=0.4, nms_thres=50, nms_topk=max_lanes)
 
 epochs = 15
-batch_size = 8
+batch_size = 24 
 
 # or 0.6e-4
-optimizer = dict(type='AdamW', lr=3e-4)  # 3e-4 for batchsize 8 \ 0.6e-3 for 24
+optimizer = dict(type='AdamW', lr=0.6e-3)  # 3e-4 for batchsize 8
 total_iter = (88880 // batch_size) * epochs
 scheduler = dict(type='CosineAnnealingLR', T_max=total_iter)
 
@@ -51,7 +52,7 @@ img_w = 800
 img_h = 320
 cut_height = 270
 
-train_process = [
+train_pipeline = [
     dict(
         type='GenerateLaneLine',
         transforms=[
@@ -86,7 +87,7 @@ train_process = [
     dict(type='ToTensor', keys=['img', 'lane_line', 'seg']),
 ]
 
-val_process = [
+test_pipeline = [
     dict(type='GenerateLaneLine',
          transforms=[
              dict(name='Resize',
@@ -99,24 +100,42 @@ val_process = [
 
 dataset_path = './data/culane'
 dataset_type = 'CULane'
-dataset = dict(train=dict(
+train_batch_size_per_gpu = 16
+train_num_workers = 8
+persistent_workers = True
+train_dataloader = dict(
+    batch_size=train_batch_size_per_gpu,
+    num_workers=train_num_workers,
+    persistent_workers=persistent_workers,
+    pin_memory=True,
+    sampler=dict(type='DefaultSampler', shuffle=True),
+    collate_fn=dict(type='default_collate'),
+    dataset=dict(
     type=dataset_type,
     data_root=dataset_path,
     split='train',
-    processes=train_process,
-),
-val=dict(
+    processes=train_pipeline,
+)
+)
+val_batch_size_per_gpu = 1
+val_num_workers = 2
+batch_shapes_cfg = None
+val_dataloder = dict(
+    batch_size=val_batch_size_per_gpu,
+    num_workers=val_num_workers,
+    persistent_workers=persistent_workers,
+    pin_memory=True,
+    drop_last=False,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    dataset=dict(
     type=dataset_type,
     data_root=dataset_path,
     split='test',
-    processes=val_process,
-),
-test=dict(
-    type=dataset_type,
-    data_root=dataset_path,
-    split='test',
-    processes=val_process,
-))
+    processes=test_pipeline,
+)
+)
+
+test_dataloader = val_dataloder
 
 workers = 10
 log_interval = 500

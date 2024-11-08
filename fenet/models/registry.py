@@ -19,7 +19,7 @@ def build(cfg, registry, default_args=None):
 
 
 def build_backbones(cfg):
-    return build(cfg.backbone, BACKBONES, default_args=dict(cfg=cfg))
+    return build(cfg.backbone, BACKBONES, default_args=None)
 
 
 def build_necks(cfg):
@@ -41,4 +41,4 @@ def build_net(cfg):
     return build(cfg.net, NETS, default_args=dict(cfg=cfg))
 
 def build_necks(cfg):
-    return build(cfg.neck, NECKS, default_args=dict(cfg=cfg))
+    return build(cfg.neck, NECKS, default_args=None)

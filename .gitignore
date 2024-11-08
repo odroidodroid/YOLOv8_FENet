@@ -23,3 +23,11 @@ tmp.*
 *.so
 build
 *.jpg
+work_dirs
+*.onnx
+*.trt
+cache
+build
+data
+img
+*.nsys-rep

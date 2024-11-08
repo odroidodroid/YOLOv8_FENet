@@ -40,7 +40,11 @@ def load_network(net, model_dir, finetune_from=None, logger=None):
         load_network_specified(net, finetune_from, logger)
         return
     pretrained_model = torch.load(model_dir)
-    net.load_state_dict(pretrained_model['net'], strict=False)
+    new_state_dict = {}
+    for key in pretrained_model['net'].keys() :
+        new_key = key.replace('module.', '')
+        new_state_dict[new_key] = pretrained_model['net'][key]
+    net.load_state_dict(new_state_dict, strict=True)
 
 
 def resume_network(model_dir, net, optim, scheduler, recorder):

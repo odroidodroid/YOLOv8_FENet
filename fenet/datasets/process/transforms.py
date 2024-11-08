@@ -8,7 +8,6 @@ from PIL import Image
 
 from ..registry import PROCESS
 
-
 def to_tensor(data):
     """Convert objects of various python types to :obj:`torch.Tensor`.
 
@@ -45,7 +44,7 @@ class ToTensor(object):
     def __call__(self, sample):
         data = {}
         if len(sample['img'].shape) < 3:
-            sample['img'] = np.expand_dims(img, -1)
+            sample['img'] = np.expand_dims(sample['img'], -1)
         for key in self.keys:
             if key == 'img_metas' or key == 'gt_masks' or key == 'lane_line':
                 data[key] = sample[key]

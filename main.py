@@ -8,7 +8,7 @@ import numpy as np
 import random
 from fenet.utils.config import Config
 from fenet.engine.runner import Runner
-from fenet.datasets import build_dataloader
+# from fenet.datasets import build_dataloader
 from signal import signal,SIGPIPE,SIG_DFL
 
 def main():
