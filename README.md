@@ -38,7 +38,7 @@ iou thr: 0.50, tp: 77378, fp: 12938, fn: 27508,precision: 0.8567474201691837, re
 **Environments**
 
 -   GPU device : A6000 x 1
--   Docker : [nvcr.io/nvidia/pytorch:22.10-py3](http://nvcr.io/nvidia/pytorch:22.10-py3)
+-   Docker : nvcr.io/nvidia/pytorch:22.10-py3
 -   python : 3.8
 -   pytorch : 1.13.0a0+d0d6b1f
 -   numpy : 1.24.4
