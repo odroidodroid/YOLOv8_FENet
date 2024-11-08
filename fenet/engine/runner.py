@@ -1,21 +1,24 @@
+import os
+import random
 import time
+
 import cv2
-import torch
-from tqdm import tqdm
 # import pytorch_warmup as warmup
 import numpy as np
-import random
-import os
+import torch
+import torch.cuda.nvtx as nvtx
+from mmengine.registry import init_default_scope
+from torch.utils.data import dataloader
+from tqdm import tqdm
 
+from fenet.datasets import build_dataloader
 from fenet.models.registry import build_net
+from fenet.utils.net_utils import load_network, resume_network, save_model
+from fenet.utils.recorder import build_recorder
+
 # from .registry import build_trainer, build_evaluator
 from .optimizer import build_optimizer
 from .scheduler import build_scheduler
-from torch.utils.data import dataloader
-from fenet.datasets import build_dataloader
-from fenet.utils.recorder import build_recorder
-from fenet.utils.net_utils import save_model, load_network, resume_network
-from mmengine.registry import init_default_scope
 
 init_default_scope('fenet')
 
@@ -135,6 +138,7 @@ class Runner(object):
                 self.scheduler.step()
 
     def test(self):
+        self.cfg.batch_size = 1
         if not self.test_loader:
             self.test_loader = build_dataloader(self.cfg.dataset.test,
                                                 self.cfg,

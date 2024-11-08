@@ -109,17 +109,16 @@ def main():
     pred = []
     with torch.no_grad() :
         for i, data in enumerate(tqdm(test_loader, desc=f"Testing")) :
-            # q_data = quantize_input(data).numpy().cuda()
-            nvtx.range_push(f"Batch {i+1} Inference")
-            torch.cuda.synchronize()
+            # enable if you want to generate nvtx time
+            # nvtx.range_push(f"Batch {i+1} Inference")
+            # torch.cuda.synchronize()
             backbone_output = infer(backbone_trt, data['img'])
-            # q_output = quantize_input(output).numpy().cuda()
             neck_output = infer(neck_trt, backbone_output)
             head_output = infer(heads_trt, neck_output)
             head_output_ = [torch.from_numpy(item_).cuda() for item_ in head_output]
             final_output = net.heads.get_lanes(head_output_[0])
-            torch.cuda.synchronize()
-            nvtx.range_pop()
+            # torch.cuda.synchronize()
+            # nvtx.range_pop()
             pred.extend(final_output)
             if cfg.view :
                 test_loader.dataset.view(final_output, data['meta'])
