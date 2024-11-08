@@ -108,7 +108,6 @@ iou thr: 0.50, tp: 77378, fp: 12938, fn: 27508,precision: 0.8567474201691837, re
     $ trtexec --onnx=yolov8_heads_culane.onnx --saveEngine=yolov8_heads_culane.trt
     ```
     
-4. Quantization
 5. Test TensorRT Model
     - nvtx code is added to check inference time accurately
     - Run command
